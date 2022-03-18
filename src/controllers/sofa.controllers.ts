@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Sofa from '../models/sofa.model';
-import Grid from "gridfs-stream";
 
 interface UploadRequest extends Request {
     sofa: {
@@ -14,7 +13,7 @@ const update = async (req: UploadRequest, res: Response, next: NextFunction) => 
 
     const update = { imageUrl, type, seats, length, width, depth }
 
-    Sofa.findOneAndUpdate(_id, update, { new: true })
+    Sofa.findOneAndUpdate({ _id: _id }, update, { new: true })
         .exec()
         .then((sofa) => {
             return res.status(200).json({
@@ -57,41 +56,12 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const updateSofa = (req: Request, res: Response, next: NextFunction) => {
-
-};
-
-// const getSofa = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const file = await gfs.files.findOne({ filename: req.params.filename });
-//         const readStream = gridfsBucket.openDownloadStreamByName(file.filename);
-//         readStream.pipe(res);
-//     } catch (error) {
-//         console.log(error);
-//         res.send("Image not found");
-//     }
-// };
-
-// const deleteSofa = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         await gfs.files.deleteOne({ filename: req.params.filename });
-//         res.send("success");
-//     } catch (error) {
-//         console.log(error);
-//         res.send("An error occured.");
-//     }
-// };
-
-const getSofa = async (req: Request, res: Response, next: NextFunction) => {
-
-};
-
 const deleteSofa = async (req: Request, res: Response, next: NextFunction) => {
     const { _id } = req.params;
 
     console.log(_id)
 
-    Sofa.findOneAndDelete({ _id })
+    Sofa.findOneAndDelete({ _id: _id })
         .exec()
         .then((sofa) => {
             return res.status(200).json({
@@ -146,12 +116,12 @@ const reportSofa = (req: Request, res: Response, next: NextFunction) => {
     const { report, _id, email } = req.body
 
     const posUpdate = { posrates: [email] }
-    const negUpdate = { posrates: [email] }
+    const negUpdate = { negrates: [email] }
 
-    console.log(update)
+    console.log(_id)
 
     if (report === 'Aprovado') {
-        Sofa.findOneAndUpdate(_id, posUpdate, { new: true })
+        Sofa.findOneAndUpdate({ _id: _id }, posUpdate, { new: true })
             .exec()
             .then((sofa) => {
                 return res.status(200).json({
@@ -166,7 +136,7 @@ const reportSofa = (req: Request, res: Response, next: NextFunction) => {
             });
     }
     else {
-        Sofa.findOneAndUpdate(_id, negUpdate, { new: true })
+        Sofa.findOneAndUpdate({ _id: _id }, negUpdate, { new: true })
             .exec()
             .then((sofa) => {
                 return res.status(200).json({
@@ -183,4 +153,4 @@ const reportSofa = (req: Request, res: Response, next: NextFunction) => {
 
 };
 
-export default { create, update, getSofa, getAllSofas, deleteSofa, reportSofa, getLastSofa };
+export default { create, update, getAllSofas, deleteSofa, reportSofa, getLastSofa };

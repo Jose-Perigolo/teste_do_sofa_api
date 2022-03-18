@@ -20,18 +20,6 @@ const register = (req: Request, res: Response, next: NextFunction) => {
 
     console.log(username, email, password);
 
-    // const duplicateUser = User.findOne({ email }).exec().then((user) => {
-    //     if (!!user) {
-    //         return res.status(401).json({
-    //             message: 'Email already in use'
-    //         });
-    //     }
-    // })
-
-    // if (!!duplicateUser) {
-    //     return
-    // }
-
     bcryptjs.hash(password, 10, (hashError, hash) => {
         if (hashError) {
             return res.status(401).json({
@@ -134,7 +122,7 @@ const update = (req: Request, res: Response, next: NextFunction) => {
 
     const update = { username, email, role }
 
-    User.findOneAndUpdate(_id, update, { new: true })
+    User.findOneAndUpdate({ _id: _id }, update, { new: true })
         .select('-password')
         .exec()
         .then((users) => {
@@ -153,7 +141,7 @@ const update = (req: Request, res: Response, next: NextFunction) => {
 const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     const { _id } = req.params
 
-    User.findOneAndDelete({ _id })
+    User.findOneAndDelete({ _id: _id })
         .select('-password')
         .exec()
         .then((users) => {
